@@ -95,6 +95,8 @@ bool BME280::WriteSettings()
    WriteRegister(CTRL_HUM_ADDR, ctrlHum);
    WriteRegister(CTRL_MEAS_ADDR, ctrlMeas);
    WriteRegister(CONFIG_ADDR, config);
+
+   return true;
 }
 
 
