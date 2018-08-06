@@ -99,9 +99,10 @@ class MQTTClient {
   void begin(const char hostname[], Client &client) { this->begin(hostname, 1883, client); }
 
   void begin(const char hostname[], int port, Client &client) {
-    // set config
-    this->hostname = hostname;
-    this->port = port;
+    // set hostname and port
+    this->setHost(hostname, port);
+
+    // set client
     this->netClient = &client;
 
     // initialize client
@@ -134,7 +135,13 @@ class MQTTClient {
   void setHost(const char hostname[]) { this->setHost(hostname, 1883); }
 
   void setHost(const char hostname[], int port) {
-    this->hostname = hostname;
+    // free hostname if set
+    if(this->hostname != nullptr) {
+      free((void *)this->hostname);
+    }
+
+    // set hostname and port
+    this->hostname = strdup(hostname);
     this->port = port;
   }
 
@@ -200,7 +207,10 @@ class MQTTClient {
     // connect to broker
     this->_lastError = lwmqtt_connect(&this->client, options, will, &this->_returnCode, this->timeout);
     if (this->_lastError != LWMQTT_SUCCESS) {
-      return this->close();
+      // close connection
+      this->close();
+
+      return false;
     }
 
     // set flag
@@ -253,7 +263,10 @@ class MQTTClient {
     // publish message
     this->_lastError = lwmqtt_publish(&this->client, lwmqtt_string(topic), message, this->timeout);
     if (this->_lastError != LWMQTT_SUCCESS) {
-      return this->close();
+      // close connection
+      this->close();
+
+      return false;
     }
 
     return true;
@@ -274,7 +287,10 @@ class MQTTClient {
     // subscribe to topic
     this->_lastError = lwmqtt_subscribe_one(&this->client, lwmqtt_string(topic), (lwmqtt_qos_t)qos, this->timeout);
     if (this->_lastError != LWMQTT_SUCCESS) {
-      return this->close();
+      // close connection
+      this->close();
+
+      return false;
     }
 
     return true;
@@ -291,7 +307,10 @@ class MQTTClient {
     // unsubscribe from topic
     this->_lastError = lwmqtt_unsubscribe_one(&this->client, lwmqtt_string(topic), this->timeout);
     if (this->_lastError != LWMQTT_SUCCESS) {
-      return this->close();
+      // close connection
+      this->close();
+
+      return false;
     }
 
     return true;
@@ -310,14 +329,20 @@ class MQTTClient {
     if (available > 0) {
       this->_lastError = lwmqtt_yield(&this->client, available, this->timeout);
       if (this->_lastError != LWMQTT_SUCCESS) {
-        return this->close();
+        // close connection
+        this->close();
+
+        return false;
       }
     }
 
     // keep the connection alive
     this->_lastError = lwmqtt_keep_alive(&this->client, this->timeout);
     if (this->_lastError != LWMQTT_SUCCESS) {
-      return this->close();
+      // close connection
+      this->close();
+
+      return false;
     }
 
     return true;
@@ -349,14 +374,12 @@ class MQTTClient {
   }
 
  private:
-  bool close() {
+  void close() {
     // set flag
     this->_connected = false;
 
     // close network
     this->netClient->stop();
-
-    return false;
   }
 };
 
