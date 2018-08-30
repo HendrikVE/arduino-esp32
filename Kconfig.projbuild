@@ -249,4 +249,30 @@ config ARDUINO_SELECTIVE_Wire
     default y
 
 
+config ARDUINO_SELECTIVE_Adafruit_BME280
+    bool "Enable Adafruit_BME280"
+    depends on ARDUINO_SELECTIVE_COMPILATION
+    default y
+
+config ARDUINO_SELECTIVE_Adafruit_BME680
+    bool "Enable Adafruit_BME680"
+    depends on ARDUINO_SELECTIVE_COMPILATION
+    default y
+
+config ARDUINO_SELECTIVE_Adafruit_Sensor
+    bool "Enable Adafruit_Sensor"
+    depends on ARDUINO_SELECTIVE_COMPILATION
+    default y
+
+config ARDUINO_SELECTIVE_Arduino_Log
+    bool "Enable Arduino_Log"
+    depends on ARDUINO_SELECTIVE_COMPILATION
+    default y
+
+config ARDUINO_SELECTIVE_arduino_mqtt
+    bool "Enable arduino_mqtt"
+    depends on ARDUINO_SELECTIVE_COMPILATION
+    default y
+
+
 endmenu
