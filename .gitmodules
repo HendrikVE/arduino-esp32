@@ -4,3 +4,6 @@
 [submodule "libraries/Arduino-Log"]
 	path = libraries/Arduino-Log
 	url = https://github.com/thijse/Arduino-Log
+[submodule "libraries/arduino-mqtt"]
+	path = libraries/arduino-mqtt
+	url = https://github.com/256dpi/arduino-mqtt
